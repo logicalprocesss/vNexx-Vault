@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.27;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -48,4 +48,8 @@ contract ERC4626Vault is ERC4626, Ownable {
         if (supply == 0) return 10 ** decimals();
         return (totalAssets() * 10 ** decimals()) / supply;
     }
+    function _decimalsOffset() internal pure override returns (uint8) {
+    return 6;
+    }
+
 }
