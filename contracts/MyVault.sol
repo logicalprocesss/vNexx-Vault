@@ -5,6 +5,8 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC4626} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
+
 
 contract MyVault is ERC4626, ReentrancyGuard {
     uint256 public constant DEPOSIT_CAP = 1_000_000e18;
@@ -45,5 +47,20 @@ contract MyVault is ERC4626, ReentrancyGuard {
     function maxMint(address receiver) public view override returns (uint256) {
     return convertToShares(maxDeposit(receiver));
     }
- 
+
+    function depositWithPermit(
+        uint256 assets,
+        address receiver,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+         
+    ) external returns (uint256 shares) {
+        try IERC20Permit(asset()).permit(msg.sender, address(this), assets, deadline, v, r, s) {} catch {}
+        return deposit(assets, receiver);
+    }
+
+
+
 }
